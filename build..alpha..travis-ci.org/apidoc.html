@@ -3539,7 +3539,23 @@ prepending for cases where you need to override existing assets.
     <li>description and source-code<pre class="apidocCodePre">function FileStore(root) {
   this.root = path.resolve(root);
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+- Fixed assets unserialisation from cache
+
+
+0.5.1 / 2013-07-17
+------------------
+
+- Added compilation cache. Usage:
+  `env.cache = new Mincer.<span class="apidocCodeKeywordSpan">FileStore</span>(&#x22;/path/to/cache&#x22;);`
+- Minor fixes
+
+
+0.5.0 / 2013-07-01
+------------------
+
+- API cleanup
+...</pre></li>
     </ul>
 
 
@@ -3652,7 +3668,23 @@ prepending for cases where you need to override existing assets.
 
   prop(this, &#x27;data&#x27;, (!!data &#x26;&#x26; _.isObject(data)) ? data : {});
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+//
+// Compiling manifest with bunch of files
+//
+
+/*eslint-disable no-console*/
+
+if (args.output) {
+var manifest = new Mincer.<span class="apidocCodeKeywordSpan">Manifest</span>(environment, args.output);
+
+try {
+  manifest.compile(filenames);
+} catch (err) {
+  console.error(err);
+  process.exit(1);
+}
+...</pre></li>
     </ul>
 
 
@@ -3808,7 +3840,23 @@ prepending for cases where you need to override existing assets.
     }
   }
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+});
+
+//
+// override [[Engines]] mixin methods
+//
+
+func_proxy_with_expire_index(&#x27;registerEngine&#x27;, function (ext, klass) {
+  this.<span class="apidocCodeKeywordSpan">addEngineToTrail</span>(ext, klass);
+});
+
+//
+// override [[Processing]] mixin methods
+//
+
+func_proxy_with_expire_index(&#x27;registerPreprocessor&#x27;);
+...</pre></li>
     </ul>
 
 
@@ -3963,16 +4011,19 @@ Mincer.registerConfiguration(&#x27;source_map&#x27;, {
   config.state = &#x27;enabled&#x27;;
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
+var environment = module.exports = new Mincer.Environment(__dirname);
 
-Mincer.registerConfiguration(&#x27;source_maps&#x27;, { state: &#x27;disabled&#x27; });
 
+//
+// Enable source maps support
+//
 
-// Alias for `source_maps`
-Mincer.registerConfiguration(&#x27;source_map&#x27;, {
-  state:    &#x27;disabled&#x27;,
-  enable:   function (self) { self.<span class="apidocCodeKeywordSpan">enable</span>(&#x27;source_maps&#x27;); },
-  disable:  function (self) { self.disable(&#x27;source_maps&#x27;); }
-});
+environment.<span class="apidocCodeKeywordSpan">enable</span>(&#x27;source_maps&#x27;);
+// environment.sourceRoot = &#x27;/&#x27;; // use to cheat nesting level in dev tools
+
+//
+// Configure environment load paths (where to find ssets)
+//
 ...</pre></li>
     </ul>
 
@@ -3991,7 +4042,23 @@ Mincer.registerConfiguration(&#x27;source_map&#x27;, {
   }
   return this.__bundleProcessors__.clone();
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+// define internal properties
+prop(this, &#x27;__trail__&#x27;,             new Hike(root || &#x27;.&#x27;));
+prop(this, &#x27;__engines__&#x27;,           Mincer.getEngines());
+prop(this, &#x27;__mimeTypes__&#x27;,         Mincer.registeredMimeTypes);
+prop(this, &#x27;__preProcessors__&#x27;,     Mincer.getPreProcessors());
+prop(this, &#x27;__postProcessors__&#x27;,    Mincer.getPostProcessors());
+prop(this, &#x27;__bundleProcessors__&#x27;,  Mincer.<span class="apidocCodeKeywordSpan">getBundleProcessors</span>());
+prop(this, &#x27;__compressors__&#x27;,       Mincer.getCompressors());
+prop(this, &#x27;__configurations__&#x27;,    Mincer.getConfigurations());
+
+// append paths
+_.forEach(Mincer.paths, function (path) {
+  this.appendPath(path);
+}, this);
+...</pre></li>
     </ul>
 
 
@@ -4006,7 +4073,22 @@ Mincer.registerConfiguration(&#x27;source_map&#x27;, {
     <li>description and source-code<pre class="apidocCodePre">getCompressors = function () {
   return this.__compressors__.clone();
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+// define internal properties
+prop(this, &#x27;__trail__&#x27;,             new Hike(root || &#x27;.&#x27;));
+prop(this, &#x27;__engines__&#x27;,           Mincer.getEngines());
+prop(this, &#x27;__mimeTypes__&#x27;,         Mincer.registeredMimeTypes);
+prop(this, &#x27;__preProcessors__&#x27;,     Mincer.getPreProcessors());
+prop(this, &#x27;__postProcessors__&#x27;,    Mincer.getPostProcessors());
+prop(this, &#x27;__bundleProcessors__&#x27;,  Mincer.getBundleProcessors());
+prop(this, &#x27;__compressors__&#x27;,       Mincer.<span class="apidocCodeKeywordSpan">getCompressors</span>());
+prop(this, &#x27;__configurations__&#x27;,    Mincer.getConfigurations());
+
+// append paths
+_.forEach(Mincer.paths, function (path) {
+  this.appendPath(path);
+}, this);
+...</pre></li>
     </ul>
 
 
@@ -4021,7 +4103,23 @@ Mincer.registerConfiguration(&#x27;source_map&#x27;, {
     <li>description and source-code<pre class="apidocCodePre">getConfigurations = function () {
   return _.cloneDeep(this.__configurations__);
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+prop(this, &#x27;__trail__&#x27;,             new Hike(root || &#x27;.&#x27;));
+prop(this, &#x27;__engines__&#x27;,           Mincer.getEngines());
+prop(this, &#x27;__mimeTypes__&#x27;,         Mincer.registeredMimeTypes);
+prop(this, &#x27;__preProcessors__&#x27;,     Mincer.getPreProcessors());
+prop(this, &#x27;__postProcessors__&#x27;,    Mincer.getPostProcessors());
+prop(this, &#x27;__bundleProcessors__&#x27;,  Mincer.getBundleProcessors());
+prop(this, &#x27;__compressors__&#x27;,       Mincer.getCompressors());
+prop(this, &#x27;__configurations__&#x27;,    Mincer.<span class="apidocCodeKeywordSpan">getConfigurations</span>());
+
+// append paths
+_.forEach(Mincer.paths, function (path) {
+  this.appendPath(path);
+}, this);
+
+// append default engines
+...</pre></li>
     </ul>
 
 
@@ -4040,21 +4138,21 @@ Mincer.registerConfiguration(&#x27;source_map&#x27;, {
   return _.clone(this.__engines__);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
+*  Returns the format extension.
+*
+*      &#x22;foo.js.coffee&#x22;
+*      // -&#x3e; &#x22;.js&#x22;
+**/
+getter(AssetAttributes.prototype, &#x27;formatExtension&#x27;, function () {
+ return _.find(this.extensions.reverse(), function (ext) {
+   return this.getMimeType(ext) &#x26;&#x26; !this.<span class="apidocCodeKeywordSpan">getEngines</span>(ext);
+ }, this.environment);
+});
+
+
 /**
- *  Engines#getEngines(ext) -&#x3e; Object|Function
- *
- *  Returns an `Object` map of `extension =&#x3e; Engine`s registered on the
- *  `Environment`. If an `ext` argument is supplied, the `Engine` register
- *  under that extension will be returned.
- *
- *      environment.<span class="apidocCodeKeywordSpan">getEngines</span>()
- *      // -&#x3e; { &#x22;.styl&#x22;: StylusEngine, ... }
- *
- *      environment.getEngines(&#x27;.styl&#x27;)
- *      // -&#x3e; StylusEngine
- **/
-module.exports.getEngines = function (ext) {
-if (ext) {
+*  AssetAttributes#engineExtension -&#x3e; Array
+*
 ...</pre></li>
     </ul>
 
@@ -4071,19 +4169,16 @@ if (ext) {
   return this.__mimeTypes__.getExtension(type) || Mimoza.getExtension(type);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
+ *
+ *  `.coffee` files carry an implicit `.js` extension (due to it&#x27;s implicit
+ *  content type of `application/javascript`).
  **/
-module.exports.addEngineToTrail = function (ext, klass) {
-  var format_ext;
-
-  this.__trail__.appendExtensions(ext);
-
-  if (klass.defaultMimeType) {
-    format_ext = this.<span class="apidocCodeKeywordSpan">getExtensionForMimeType</span>(klass.defaultMimeType);
-    if (format_ext) {
-      this.__trail__.aliasExtension(format_ext, ext);
-    }
+getter(AssetAttributes.prototype, &#x27;engineFormatExtension&#x27;, function () {
+  var type = this.engineContentType;
+  if (type) {
+    return this.environment.<span class="apidocCodeKeywordSpan">getExtensionForMimeType</span>(type);
   }
-};
+});
 ...</pre></li>
     </ul>
 
@@ -4100,21 +4195,21 @@ module.exports.addEngineToTrail = function (ext, klass) {
   return this.__mimeTypes__.getMimeType(ext) || Mimoza.getMimeType(ext);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-
-/**
-*  Mime#getMimeType(ext) -&#x3e; String
+*  Returns the format extension.
 *
-*  Returns the mime type for the `extension`.
+*      &#x22;foo.js.coffee&#x22;
+*      // -&#x3e; &#x22;.js&#x22;
 **/
-module.exports.getMimeType = function (ext) {
- return this.__mimeTypes__.<span class="apidocCodeKeywordSpan">getMimeType</span>(ext) || Mimoza.getMimeType(ext);
-};
+getter(AssetAttributes.prototype, &#x27;formatExtension&#x27;, function () {
+ return _.find(this.extensions.reverse(), function (ext) {
+   return this.<span class="apidocCodeKeywordSpan">getMimeType</span>(ext) &#x26;&#x26; !this.getEngines(ext);
+ }, this.environment);
+});
 
 
 /**
-*  Mime#registeredMimeTypes -&#x3e; Mimoza
+*  AssetAttributes#engineExtension -&#x3e; Array
 *
-*  Returns a copy of `Mimoza` instance with explicitly registered mime types.
 ...</pre></li>
     </ul>
 
@@ -4133,7 +4228,23 @@ module.exports.getMimeType = function (ext) {
   }
   return this.__postProcessors__.clone();
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+*  AssetAttributes#processors -&#x3e; Array
+*
+*  Returns all processors to run on the path.
+**/
+getter(AssetAttributes.prototype, &#x27;processors&#x27;, function () {
+ return [].concat(this.environment.getPreProcessors(this.contentType),
+                  this.engines.reverse(),
+                  this.environment.<span class="apidocCodeKeywordSpan">getPostProcessors</span>(this.contentType));
+});
+
+
+/**
+*  AssetAttributes#contentType -&#x3e; String
+*
+*  Returns the content type for the pathname.
+...</pre></li>
     </ul>
 
 
@@ -4151,7 +4262,23 @@ module.exports.getMimeType = function (ext) {
   }
   return this.__preProcessors__.clone();
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+/**
+*  AssetAttributes#processors -&#x3e; Array
+*
+*  Returns all processors to run on the path.
+**/
+getter(AssetAttributes.prototype, &#x27;processors&#x27;, function () {
+ return [].concat(this.environment.<span class="apidocCodeKeywordSpan">getPreProcessors</span>(this.contentType),
+                  this.engines.reverse(),
+                  this.environment.getPostProcessors(this.contentType));
+});
+
+
+/**
+*  AssetAttributes#contentType -&#x3e; String
+...</pre></li>
     </ul>
 
 
@@ -4183,20 +4310,21 @@ module.exports.getMimeType = function (ext) {
   return configuration(this, name).state === &#x27;enabled&#x27;;
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-/**
- *  Configuring#isEnabled(name) -&#x3e; Void
- *
- *  Tells whenever given configuration enabled or not.
- *
- *  ##### Example
- *
- *      if (env.<span class="apidocCodeKeywordSpan">isEnabled</span>(&#x27;source_maps&#x27;)) {
- *        // ...
- *      }
- **/
-module.exports.isEnabled = function (name) {
-  return configuration(this, name).state === &#x27;enabled&#x27;;
-};
+  prop(this, &#x27;__dependencyPaths__&#x27;, processedAsset.__dependencyPaths__);
+
+  // moved from the end just to use context helper function
+  Klass       = this.environment.ContextClass;
+  context     = new Klass(this.environment, this.logicalPath, this.pathname);
+
+
+  if (!this.environment.<span class="apidocCodeKeywordSpan">isEnabled</span>(&#x27;source_maps&#x27;)) {
+this.toArray().forEach(function (dep) {
+  source += dep.toString();
+});
+  } else {
+
+var baseDir = path.dirname(this.pathname);
+resultSourceNode = new sourcemap.SourceNode(
 ...</pre></li>
     </ul>
 
@@ -5296,7 +5424,23 @@ try {
     <li>description and source-code<pre class="apidocCodePre">eachEntry = function (path, func) {
   return this.context.environment.eachEntry(path, func);
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+/**
+*  Base#eachEntry(root, iterator) -&#x3e; Void
+*  - root (String)
+*  - iterator (Function)
+*
+*  Calls `iterator` on each found file or directory in alphabetical order:
+*
+*      env.<span class="apidocCodeKeywordSpan">eachEntry</span>(&#x27;/some/path&#x27;, function (entry) {
+*        console.log(entry);
+*      });
+*      // -&#x3e; &#x22;/some/path/a&#x22;
+*      // -&#x3e; &#x22;/some/path/a/b.txt&#x22;
+*      // -&#x3e; &#x22;/some/path/a/c.txt&#x22;
+*      // -&#x3e; &#x22;/some/path/b.txt&#x22;
+**/
+...</pre></li>
     </ul>
 
 
@@ -5311,7 +5455,23 @@ try {
     <li>description and source-code<pre class="apidocCodePre">entries = function (pathname) {
   return this.context.environment.entries(pathname);
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+*  Base#entries(pathname) -&#x3e; Array
+*  - pathname (String)
+*
+*  Proxy to `Hike.Trail#entries`. Works like `fs.readdirSync`.
+*  Subclasses may cache this method.
+**/
+Base.prototype.entries = function (pathname) {
+ return this.__trail__.<span class="apidocCodeKeywordSpan">entries</span>(pathname);
+};
+
+
+/**
+*  Base#stat(pathname) -&#x3e; fs.Stats
+*  - pathname (String)
+*
+...</pre></li>
     </ul>
 
 
@@ -5386,7 +5546,23 @@ try {
     self.context.__LINE__ = null;
   });
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+  prop(this, &#x27;header&#x27;,              header);
+  prop(this, &#x27;body&#x27;,                this.data.substr(header.length) + &#x27;\n&#x27;);
+  prop(this, &#x27;includedPathnames&#x27;,   [], { writable: true });
+
+  prop(this, &#x27;context&#x27;,             context);
+  prop(this, &#x27;result&#x27;,              &#x27;&#x27;, { writable: true });
+
+  self.<span class="apidocCodeKeywordSpan">processDirectives</span>();
+  self.processSource();
+
+  this.data = self.result;
+};
+
+
+/**
+...</pre></li>
     </ul>
 
 
@@ -5418,7 +5594,23 @@ try {
     self.result += self.body;
   }
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+//
+require_self: function (self/*, args*/) {
+  if (self.__hasWrittenBody__) {
+    throw new Error(&#x27;require_self can only be called once per source file&#x27;);
+  }
+
+  self.context.requireAsset(self.pathname);
+  self.<span class="apidocCodeKeywordSpan">processSource</span>();
+
+  prop(self, &#x27;__hasWrittenBody__&#x27;, true);
+  self.includedPathnames = [];
+},
+
+
+// The `include` directive works similar to `require` but
+...</pre></li>
     </ul>
 
 
@@ -5434,21 +5626,21 @@ try {
   return this.context.environment.stat(pathname);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
- *  current concatenation.
- **/
-Context.prototype.isAssetRequirable = function (pathname) {
-  var content_type, stat;
-
-  pathname      = this.resolve(pathname);
-  content_type  = this.environment.contentTypeOf(pathname);
-  stat          = this.environment.<span class="apidocCodeKeywordSpan">stat</span>(pathname);
-
-  return stat &#x26;&#x26; stat.isFile() &#x26;&#x26;
-         (!this.contentType || this.contentType === content_type);
+*  Base#stat(pathname) -&#x3e; fs.Stats
+*  - pathname (String)
+*
+*  Proxy to `Hike.Trail#stat`. Works like `fs.statSync`.
+*  Subclasses may cache this method.
+**/
+Base.prototype.stat = function (pathname) {
+ return this.__trail__.<span class="apidocCodeKeywordSpan">stat</span>(pathname);
 };
 
 
 /**
+*  Base#getFileDigest(pathname) -&#x3e; String
+*  - pathname (String)
+*
 ...</pre></li>
     </ul>
 
@@ -5680,7 +5872,23 @@ prepending for cases where you need to override existing assets.
     <li>description and source-code<pre class="apidocCodePre">expireIndex = function () {
   this.__assets__ = {};
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+  // provide getters/setter
+  Object.defineProperty(Base.prototype, name, {
+    get: function () {
+      return this[__name__];
+    },
+    set: function (val) {
+      this.<span class="apidocCodeKeywordSpan">expireIndex</span>();
+      this[__name__] = val;
+    }
+  });
+}
+
+
+/**
+...</pre></li>
     </ul>
 
 
@@ -5800,7 +6008,23 @@ Now, you can call that helper with EJS like this:
     }
   }
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+});
+
+//
+// override [[Engines]] mixin methods
+//
+
+func_proxy_with_expire_index(&#x27;registerEngine&#x27;, function (ext, klass) {
+  this.<span class="apidocCodeKeywordSpan">addEngineToTrail</span>(ext, klass);
+});
+
+//
+// override [[Processing]] mixin methods
+//
+
+func_proxy_with_expire_index(&#x27;registerPreprocessor&#x27;);
+...</pre></li>
     </ul>
 
 
@@ -5850,21 +6074,20 @@ prepending for cases where you need to override existing assets.
   return new AssetAttributes(this, pathname);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
+ *
+ *  An Error with `code = &#x27;FileNotFound&#x27;` is raised if the file does not exist.
+ **/
+Base.prototype.resolve = function (logicalPath, options, fn) {
+  var err, resolved, search;
 
-/**
-*  Context#relativePath -&#x3e; String
-*
-*  Returns AssetAttributes#relativePath of current file.
-**/
-getter(Context.prototype, &#x27;relativePath&#x27;, function () {
- return this.environment.<span class="apidocCodeKeywordSpan">attributesFor</span>(this.pathname).relativePath;
-});
+  if (fn) {
+    search = this.<span class="apidocCodeKeywordSpan">attributesFor</span>(logicalPath).searchPaths;
+    return this.__trail__.find(search, options, function (pathname) {
+var bower, extname;
 
-
-/**
-*  Context#resolve(pathname[, options = {}[, fn]]) -&#x3e; String
-*  - pathname (String)
-*  - options (Object)
+if (!_.contains([ &#x27;component.json&#x27;, &#x27;bower.json&#x27; ], path.basename(pathname))) {
+  return fn(pathname);
+}
 ...</pre></li>
     </ul>
 
@@ -5897,7 +6120,23 @@ getter(Context.prototype, &#x27;relativePath&#x27;, function () {
     return new ProcessedAsset(self.index, logicalPath, pathname);
   });
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+       return null;
+     }
+
+     throw err;
+   }
+ }
+
+ return this.<span class="apidocCodeKeywordSpan">buildAsset</span>(logical_path, pathname, options);
+};
+
+
+/**
+*  Base#eachEntry(root, iterator) -&#x3e; Void
+*  - root (String)
+*  - iterator (Function)
+...</pre></li>
     </ul>
 
 
@@ -5938,7 +6177,22 @@ getter(Context.prototype, &#x27;relativePath&#x27;, function () {
     return asset;
   }
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+
+// See Base#buildAsset
+Index.prototype.buildAsset = function (logicalPath, pathname, options) {
+  var self = this, key = this.cacheKeyFor(pathname, options);
+
+  if (!this.__assets__[key]) {
+    this.__assets__[key] = this.<span class="apidocCodeKeywordSpan">cacheAsset</span>(key, function () {
+      return _buildAsset.call(self, logicalPath, pathname, options);
+    });
+  }
+
+  return this.__assets__[key];
+};
+...</pre></li>
     </ul>
 
 
@@ -5953,7 +6207,23 @@ getter(Context.prototype, &#x27;relativePath&#x27;, function () {
     <li>description and source-code<pre class="apidocCodePre">cacheKeyFor = function (pathname, options) {
   return pathname + String(options.bundle ? 1 : 0);
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+Environment.prototype.findAsset = function (path, options) {
+var asset;
+
+options = options || {};
+options.bundle = (typeof options.bundle === &#x27;undefined&#x27;) ? true : !!options.bundle;
+
+// Ensure inmemory cached assets are still fresh on every lookup
+asset = this.__assets__[this.<span class="apidocCodeKeywordSpan">cacheKeyFor</span>(path, options)];
+
+if (asset &#x26;&#x26; asset.isFresh(this)) {
+  return asset;
+}
+
+// Cache is pushed upstream by Index#find_asset
+return this.index.findAsset(path, options);
+...</pre></li>
     </ul>
 
 
@@ -6071,7 +6341,23 @@ Mincer.registerConfiguration(&#x27;source_map&#x27;, {
 
   paths.sort().forEach(iterator);
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+/**
+*  Base#eachEntry(root, iterator) -&#x3e; Void
+*  - root (String)
+*  - iterator (Function)
+*
+*  Calls `iterator` on each found file or directory in alphabetical order:
+*
+*      env.<span class="apidocCodeKeywordSpan">eachEntry</span>(&#x27;/some/path&#x27;, function (entry) {
+*        console.log(entry);
+*      });
+*      // -&#x3e; &#x22;/some/path/a&#x22;
+*      // -&#x3e; &#x22;/some/path/a/b.txt&#x22;
+*      // -&#x3e; &#x22;/some/path/a/c.txt&#x22;
+*      // -&#x3e; &#x22;/some/path/b.txt&#x22;
+**/
+...</pre></li>
     </ul>
 
 
@@ -6094,7 +6380,23 @@ Mincer.registerConfiguration(&#x27;source_map&#x27;, {
     });
   });
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+ *  matches at least one of the given filters.
+ *
+ *  Each filter might be a `String`, `RegExp` or a `Function`.
+ **/
+Base.prototype.eachLogicalPath = function (filters, iterator) {
+  var self = this, files = {};
+
+  this.<span class="apidocCodeKeywordSpan">eachFile</span>(function (filename) {
+    var logical_path = logical_path_for_filename(self, filename, filters);
+    if (logical_path &#x26;&#x26; !files[logical_path]) {
+      iterator(logical_path, filename);
+      files[logical_path] = true;
+    }
+  });
+};
+...</pre></li>
     </ul>
 
 
@@ -6117,7 +6419,23 @@ Mincer.registerConfiguration(&#x27;source_map&#x27;, {
     }
   });
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+if (!this.environment) {
+  throw new Error(&#x27;Manifest requries environment for compilation&#x27;);
+}
+
+options = options || {};
+
+this.environment.<span class="apidocCodeKeywordSpan">eachLogicalPath</span>(files, function (pathname) {
+  paths.push(pathname);
+});
+
+paths = _.union(paths, _.filter(files, isAbsolute));
+
+paths.forEach(function (logicalPath) {
+  var timer = start_timer(), asset, target;
+...</pre></li>
     </ul>
 
 
@@ -6139,16 +6457,19 @@ Mincer.registerConfiguration(&#x27;source_map&#x27;, {
   config.state = &#x27;enabled&#x27;;
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
+var environment = module.exports = new Mincer.Environment(__dirname);
 
-Mincer.registerConfiguration(&#x27;source_maps&#x27;, { state: &#x27;disabled&#x27; });
 
+//
+// Enable source maps support
+//
 
-// Alias for `source_maps`
-Mincer.registerConfiguration(&#x27;source_map&#x27;, {
-  state:    &#x27;disabled&#x27;,
-  enable:   function (self) { self.<span class="apidocCodeKeywordSpan">enable</span>(&#x27;source_maps&#x27;); },
-  disable:  function (self) { self.disable(&#x27;source_maps&#x27;); }
-});
+environment.<span class="apidocCodeKeywordSpan">enable</span>(&#x27;source_maps&#x27;);
+// environment.sourceRoot = &#x27;/&#x27;; // use to cheat nesting level in dev tools
+
+//
+// Configure environment load paths (where to find ssets)
+//
 ...</pre></li>
     </ul>
 
@@ -6164,7 +6485,23 @@ Mincer.registerConfiguration(&#x27;source_map&#x27;, {
     <li>description and source-code<pre class="apidocCodePre">entries = function (pathname) {
   return this.__trail__.entries(pathname);
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+*  Base#entries(pathname) -&#x3e; Array
+*  - pathname (String)
+*
+*  Proxy to `Hike.Trail#entries`. Works like `fs.readdirSync`.
+*  Subclasses may cache this method.
+**/
+Base.prototype.entries = function (pathname) {
+ return this.__trail__.<span class="apidocCodeKeywordSpan">entries</span>(pathname);
+};
+
+
+/**
+*  Base#stat(pathname) -&#x3e; fs.Stats
+*  - pathname (String)
+*
+...</pre></li>
     </ul>
 
 
@@ -6237,7 +6574,23 @@ asset.pathname;   // full path on the filesystem
   }
   return this.__bundleProcessors__.clone();
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+// define internal properties
+prop(this, &#x27;__trail__&#x27;,             new Hike(root || &#x27;.&#x27;));
+prop(this, &#x27;__engines__&#x27;,           Mincer.getEngines());
+prop(this, &#x27;__mimeTypes__&#x27;,         Mincer.registeredMimeTypes);
+prop(this, &#x27;__preProcessors__&#x27;,     Mincer.getPreProcessors());
+prop(this, &#x27;__postProcessors__&#x27;,    Mincer.getPostProcessors());
+prop(this, &#x27;__bundleProcessors__&#x27;,  Mincer.<span class="apidocCodeKeywordSpan">getBundleProcessors</span>());
+prop(this, &#x27;__compressors__&#x27;,       Mincer.getCompressors());
+prop(this, &#x27;__configurations__&#x27;,    Mincer.getConfigurations());
+
+// append paths
+_.forEach(Mincer.paths, function (path) {
+  this.appendPath(path);
+}, this);
+...</pre></li>
     </ul>
 
 
@@ -6252,7 +6605,22 @@ asset.pathname;   // full path on the filesystem
     <li>description and source-code<pre class="apidocCodePre">getCompressors = function () {
   return this.__compressors__.clone();
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+// define internal properties
+prop(this, &#x27;__trail__&#x27;,             new Hike(root || &#x27;.&#x27;));
+prop(this, &#x27;__engines__&#x27;,           Mincer.getEngines());
+prop(this, &#x27;__mimeTypes__&#x27;,         Mincer.registeredMimeTypes);
+prop(this, &#x27;__preProcessors__&#x27;,     Mincer.getPreProcessors());
+prop(this, &#x27;__postProcessors__&#x27;,    Mincer.getPostProcessors());
+prop(this, &#x27;__bundleProcessors__&#x27;,  Mincer.getBundleProcessors());
+prop(this, &#x27;__compressors__&#x27;,       Mincer.<span class="apidocCodeKeywordSpan">getCompressors</span>());
+prop(this, &#x27;__configurations__&#x27;,    Mincer.getConfigurations());
+
+// append paths
+_.forEach(Mincer.paths, function (path) {
+  this.appendPath(path);
+}, this);
+...</pre></li>
     </ul>
 
 
@@ -6267,7 +6635,23 @@ asset.pathname;   // full path on the filesystem
     <li>description and source-code<pre class="apidocCodePre">getConfigurations = function () {
   return _.cloneDeep(this.__configurations__);
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+prop(this, &#x27;__trail__&#x27;,             new Hike(root || &#x27;.&#x27;));
+prop(this, &#x27;__engines__&#x27;,           Mincer.getEngines());
+prop(this, &#x27;__mimeTypes__&#x27;,         Mincer.registeredMimeTypes);
+prop(this, &#x27;__preProcessors__&#x27;,     Mincer.getPreProcessors());
+prop(this, &#x27;__postProcessors__&#x27;,    Mincer.getPostProcessors());
+prop(this, &#x27;__bundleProcessors__&#x27;,  Mincer.getBundleProcessors());
+prop(this, &#x27;__compressors__&#x27;,       Mincer.getCompressors());
+prop(this, &#x27;__configurations__&#x27;,    Mincer.<span class="apidocCodeKeywordSpan">getConfigurations</span>());
+
+// append paths
+_.forEach(Mincer.paths, function (path) {
+  this.appendPath(path);
+}, this);
+
+// append default engines
+...</pre></li>
     </ul>
 
 
@@ -6286,21 +6670,21 @@ asset.pathname;   // full path on the filesystem
   return _.clone(this.__engines__);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
+*  Returns the format extension.
+*
+*      &#x22;foo.js.coffee&#x22;
+*      // -&#x3e; &#x22;.js&#x22;
+**/
+getter(AssetAttributes.prototype, &#x27;formatExtension&#x27;, function () {
+ return _.find(this.extensions.reverse(), function (ext) {
+   return this.getMimeType(ext) &#x26;&#x26; !this.<span class="apidocCodeKeywordSpan">getEngines</span>(ext);
+ }, this.environment);
+});
+
+
 /**
- *  Engines#getEngines(ext) -&#x3e; Object|Function
- *
- *  Returns an `Object` map of `extension =&#x3e; Engine`s registered on the
- *  `Environment`. If an `ext` argument is supplied, the `Engine` register
- *  under that extension will be returned.
- *
- *      environment.<span class="apidocCodeKeywordSpan">getEngines</span>()
- *      // -&#x3e; { &#x22;.styl&#x22;: StylusEngine, ... }
- *
- *      environment.getEngines(&#x27;.styl&#x27;)
- *      // -&#x3e; StylusEngine
- **/
-module.exports.getEngines = function (ext) {
-if (ext) {
+*  AssetAttributes#engineExtension -&#x3e; Array
+*
 ...</pre></li>
     </ul>
 
@@ -6317,19 +6701,16 @@ if (ext) {
   return this.__mimeTypes__.getExtension(type) || Mimoza.getExtension(type);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
+ *
+ *  `.coffee` files carry an implicit `.js` extension (due to it&#x27;s implicit
+ *  content type of `application/javascript`).
  **/
-module.exports.addEngineToTrail = function (ext, klass) {
-  var format_ext;
-
-  this.__trail__.appendExtensions(ext);
-
-  if (klass.defaultMimeType) {
-    format_ext = this.<span class="apidocCodeKeywordSpan">getExtensionForMimeType</span>(klass.defaultMimeType);
-    if (format_ext) {
-      this.__trail__.aliasExtension(format_ext, ext);
-    }
+getter(AssetAttributes.prototype, &#x27;engineFormatExtension&#x27;, function () {
+  var type = this.engineContentType;
+  if (type) {
+    return this.environment.<span class="apidocCodeKeywordSpan">getExtensionForMimeType</span>(type);
   }
-};
+});
 ...</pre></li>
     </ul>
 
@@ -6353,7 +6734,23 @@ module.exports.addEngineToTrail = function (ext, klass) {
   // If file, digest the contents
   return this.digest.update(fs.readFileSync(pathname)).digest(&#x27;hex&#x27;);
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+ **/
+getter(Index.prototype, &#x27;index&#x27;, function () {
+return this;
+});
+
+
+/**
+ *  Index.<span class="apidocCodeKeywordSpan">getFileDigest</span>(pathname) -&#x3e; crypto.Hash
+ *
+ *  Cached version of [[Base#getFileDigest]].
+ **/
+Index.prototype.getFileDigest = function (pathname) {
+if (typeof this.__digests__[pathname] === &#x27;undefined&#x27;) {
+  this.__digests__[pathname] = Base.prototype.getFileDigest.call(this, pathname);
+}
+...</pre></li>
     </ul>
 
 
@@ -6369,21 +6766,21 @@ module.exports.addEngineToTrail = function (ext, klass) {
   return this.__mimeTypes__.getMimeType(ext) || Mimoza.getMimeType(ext);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-
-/**
-*  Mime#getMimeType(ext) -&#x3e; String
+*  Returns the format extension.
 *
-*  Returns the mime type for the `extension`.
+*      &#x22;foo.js.coffee&#x22;
+*      // -&#x3e; &#x22;.js&#x22;
 **/
-module.exports.getMimeType = function (ext) {
- return this.__mimeTypes__.<span class="apidocCodeKeywordSpan">getMimeType</span>(ext) || Mimoza.getMimeType(ext);
-};
+getter(AssetAttributes.prototype, &#x27;formatExtension&#x27;, function () {
+ return _.find(this.extensions.reverse(), function (ext) {
+   return this.<span class="apidocCodeKeywordSpan">getMimeType</span>(ext) &#x26;&#x26; !this.getEngines(ext);
+ }, this.environment);
+});
 
 
 /**
-*  Mime#registeredMimeTypes -&#x3e; Mimoza
+*  AssetAttributes#engineExtension -&#x3e; Array
 *
-*  Returns a copy of `Mimoza` instance with explicitly registered mime types.
 ...</pre></li>
     </ul>
 
@@ -6402,7 +6799,23 @@ module.exports.getMimeType = function (ext) {
   }
   return this.__postProcessors__.clone();
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+*  AssetAttributes#processors -&#x3e; Array
+*
+*  Returns all processors to run on the path.
+**/
+getter(AssetAttributes.prototype, &#x27;processors&#x27;, function () {
+ return [].concat(this.environment.getPreProcessors(this.contentType),
+                  this.engines.reverse(),
+                  this.environment.<span class="apidocCodeKeywordSpan">getPostProcessors</span>(this.contentType));
+});
+
+
+/**
+*  AssetAttributes#contentType -&#x3e; String
+*
+*  Returns the content type for the pathname.
+...</pre></li>
     </ul>
 
 
@@ -6420,7 +6833,23 @@ module.exports.getMimeType = function (ext) {
   }
   return this.__preProcessors__.clone();
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+/**
+*  AssetAttributes#processors -&#x3e; Array
+*
+*  Returns all processors to run on the path.
+**/
+getter(AssetAttributes.prototype, &#x27;processors&#x27;, function () {
+ return [].concat(this.environment.<span class="apidocCodeKeywordSpan">getPreProcessors</span>(this.contentType),
+                  this.engines.reverse(),
+                  this.environment.getPostProcessors(this.contentType));
+});
+
+
+/**
+*  AssetAttributes#contentType -&#x3e; String
+...</pre></li>
     </ul>
 
 
@@ -6436,20 +6865,21 @@ module.exports.getMimeType = function (ext) {
   return configuration(this, name).state === &#x27;enabled&#x27;;
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-/**
- *  Configuring#isEnabled(name) -&#x3e; Void
- *
- *  Tells whenever given configuration enabled or not.
- *
- *  ##### Example
- *
- *      if (env.<span class="apidocCodeKeywordSpan">isEnabled</span>(&#x27;source_maps&#x27;)) {
- *        // ...
- *      }
- **/
-module.exports.isEnabled = function (name) {
-  return configuration(this, name).state === &#x27;enabled&#x27;;
-};
+  prop(this, &#x27;__dependencyPaths__&#x27;, processedAsset.__dependencyPaths__);
+
+  // moved from the end just to use context helper function
+  Klass       = this.environment.ContextClass;
+  context     = new Klass(this.environment, this.logicalPath, this.pathname);
+
+
+  if (!this.environment.<span class="apidocCodeKeywordSpan">isEnabled</span>(&#x27;source_maps&#x27;)) {
+this.toArray().forEach(function (dep) {
+  source += dep.toString();
+});
+  } else {
+
+var baseDir = path.dirname(this.pathname);
+resultSourceNode = new sourcemap.SourceNode(
 ...</pre></li>
     </ul>
 
@@ -6839,21 +7269,21 @@ var Hike    = require(&#x27;hike&#x27;);
   return this.__trail__.stat(pathname);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
- *  current concatenation.
- **/
-Context.prototype.isAssetRequirable = function (pathname) {
-  var content_type, stat;
-
-  pathname      = this.resolve(pathname);
-  content_type  = this.environment.contentTypeOf(pathname);
-  stat          = this.environment.<span class="apidocCodeKeywordSpan">stat</span>(pathname);
-
-  return stat &#x26;&#x26; stat.isFile() &#x26;&#x26;
-         (!this.contentType || this.contentType === content_type);
+*  Base#stat(pathname) -&#x3e; fs.Stats
+*  - pathname (String)
+*
+*  Proxy to `Hike.Trail#stat`. Works like `fs.statSync`.
+*  Subclasses may cache this method.
+**/
+Base.prototype.stat = function (pathname) {
+ return this.__trail__.<span class="apidocCodeKeywordSpan">stat</span>(pathname);
 };
 
 
 /**
+*  Base#getFileDigest(pathname) -&#x3e; String
+*  - pathname (String)
+*
 ...</pre></li>
     </ul>
 
@@ -7023,7 +7453,23 @@ Mincer.registerConfiguration(&#x27;source_maps&#x27;, { state: &#x27;disabled&#x
     <li>description and source-code<pre class="apidocCodePre">function FileStore(root) {
   this.root = path.resolve(root);
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+- Fixed assets unserialisation from cache
+
+
+0.5.1 / 2013-07-17
+------------------
+
+- Added compilation cache. Usage:
+  `env.cache = new Mincer.<span class="apidocCodeKeywordSpan">FileStore</span>(&#x22;/path/to/cache&#x22;);`
+- Minor fixes
+
+
+0.5.0 / 2013-07-01
+------------------
+
+- API cleanup
+...</pre></li>
     </ul>
 
 
@@ -7054,21 +7500,21 @@ Mincer.registerConfiguration(&#x27;source_maps&#x27;, { state: &#x27;disabled&#x
   return hash;
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
+  srv = child.spawn(&#x27;node&#x27;, [ path.join(__dirname, &#x27;../examples/server.js&#x27;) ], { env: env });
 
-/**
- *  Hash#get(key) -&#x3e; Mixed
- *  - key (String):
- *
- *  Returns value associated with given key:
- *
- *     processors.<span class="apidocCodeKeywordSpan">get</span>(&#x27;text/css&#x27;).push(DirectiveProcessor);
- *
- *  Associates key with value generated by `defaulter` if it does not exists
- *  yet.
- **/
-Hash.prototype.get = function (key) {
-if (!this.data[key]) {
-  this.data[key] = this.defaulter(key);
+  setTimeout(done, 1000);
+});
+
+
+it(&#x27;Server ping&#x27;, function (done) {
+  request.<span class="apidocCodeKeywordSpan">get</span>(&#x27;/&#x27;)
+    .expect(200)
+    .expect(/&#x3c;!DOCTYPE html&#x3e;/)
+    .end(done);
+});
+
+
+it(&#x27;Manifest run&#x27;, function (done) {
 ...</pre></li>
     </ul>
 
@@ -7853,7 +8299,23 @@ try {
 
   prop(this, &#x27;data&#x27;, (!!data &#x26;&#x26; _.isObject(data)) ? data : {});
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+//
+// Compiling manifest with bunch of files
+//
+
+/*eslint-disable no-console*/
+
+if (args.output) {
+var manifest = new Mincer.<span class="apidocCodeKeywordSpan">Manifest</span>(environment, args.output);
+
+try {
+  manifest.compile(filenames);
+} catch (err) {
+  console.error(err);
+  process.exit(1);
+}
+...</pre></li>
     </ul>
 
 
@@ -7948,7 +8410,23 @@ try {
 
   return self.data;
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+1.0.0 / 2014-03-25
+------------------
+
+- NEW. Finally, added sourcemaps support.
+- Removed `/?body=1` - not needed anymore, after sourcemaps added.
+- Removed `Asset.writeTo()` method.
+- `Manifest.<span class="apidocCodeKeywordSpan">compile</span>()` are now sync and throw exception on error.
+- Removed non mainstream engines: eco, coco, haml-coffee, livescript.
+- Wiki tutorial, how to create addons with new engines support.
+- Reworked example.
+- Don&#x27;t strip mincer directives from generated files
+- added `csswring` compressor, as alternative to `csso` -
+  less features, but or with sourcemaps support.
+- Added support for coffee-script block comments
+...</pre></li>
     </ul>
 
 
@@ -7964,7 +8442,23 @@ try {
   mkdirp(this.dir);
   fs.writeFileSync(this.path, JSON.stringify(this.data, null, &#x27;  &#x27;));
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+  mtime:          asset.mtime.toISOString(),
+  size:           asset.length,
+  digest:         asset.digest
+};
+
+if (fs.existsSync(target)) {
+  logger.debug(&#x27;Skipping &#x27; + target + &#x27;, already exists&#x27;);
+  self.<span class="apidocCodeKeywordSpan">save</span>();
+  return;
+}
+
+var buffer;
+
+if (options.embedMappingComments &#x26;&#x26; options.sourceMaps &#x26;&#x26; asset.sourceMap) {
+  buffer = new Buffer(asset.source + asset.mappingUrlComment());
+...</pre></li>
     </ul>
 
 
@@ -8345,7 +8839,23 @@ try {
 
   return JSON.stringify(map);
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+      outFile:        path.basename(this.file).replace(/\.(sass|scss)$/, &#x27;&#x27;),
+      sourceMap:      withSourcemap
+    }));
+
+    this.data = String(result.css || result);
+
+    if (withSourcemap) {
+      this.map = this.<span class="apidocCodeKeywordSpan">normalizeSourceMap</span>(context, String(result.map));
+    }
+
+  } catch (err) {
+    var error = sassError(err);
+    throw error;
+  }
+};
+...</pre></li>
     </ul>
 
 
@@ -8398,7 +8908,23 @@ try {
     };
   });
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+  var withSourcemap = context.environment.isEnabled(&#x27;source_maps&#x27;);
+
+  try {
+var result = sass.renderSync(_.assign({}, options, {
+  file:           this.file,
+  data:           this.data,
+  importer:       this.sassImporter.bind(this, context),
+  functions:      this.<span class="apidocCodeKeywordSpan">sassFunctions</span>(locals),
+  includePaths:   [ path.dirname(this.file) ].concat(context.environment.paths),
+  indentedSyntax: /^.*\.sass$/.test(this.file),
+  outFile:        path.basename(this.file).replace(/\.(sass|scss)$/, &#x27;&#x27;),
+  sourceMap:      withSourcemap
+}));
+
+this.data = String(result.css || result);
+...</pre></li>
     </ul>
 
 
@@ -8575,7 +9101,23 @@ app.use(function (req, res) {
     });
   });
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+1.0.0 / 2014-03-25
+------------------
+
+- NEW. Finally, added sourcemaps support.
+- Removed `/?body=1` - not needed anymore, after sourcemaps added.
+- Removed `Asset.writeTo()` method.
+- `Manifest.<span class="apidocCodeKeywordSpan">compile</span>()` are now sync and throw exception on error.
+- Removed non mainstream engines: eco, coco, haml-coffee, livescript.
+- Wiki tutorial, how to create addons with new engines support.
+- Reworked example.
+- Don&#x27;t strip mincer directives from generated files
+- added `csswring` compressor, as alternative to `csso` -
+  less features, but or with sourcemaps support.
+- Added support for coffee-script block comments
+...</pre></li>
     </ul>
 
 
@@ -8696,7 +9238,22 @@ app.use(function (req, res) {
     }
   });
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+*      var files = [&#x27;app.js&#x27;, &#x27;app.css&#x27;, &#x27;logo.jpg&#x27;];
+*      var srv = new Server(env.index, manifest.compile(files));
+*
+*  You can use this server in your connect app (or as `request` listener of
+*  `http` server) like this:
+*
+*      app.use(function (req, res) {
+*        srv.<span class="apidocCodeKeywordSpan">handle</span>(req, res);
+*      });
+*
+*      // there&#x27;s a shorthand syntax as well:
+*
+*      app.use(mincer.createServer(env));
+**/
+...</pre></li>
     </ul>
 
 
@@ -8713,21 +9270,21 @@ app.use(function (req, res) {
                        event.url, event.code, event.message, event.elapsed));
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-*  going to &#x22;nowhere&#x22;).
-*
-*
-*  ##### Log levels
-*
-*  Your `logger` backend should normally respond to following methods:
-*
-*  - `logger.<span class="apidocCodeKeywordSpan">log</span>(level, message)`  : Used by [[Logger.log]]
-*  - `logger.debug(message)`       : Used by [[Logger.debug]]
-*  - `logger.info(message)`        : Used by [[Logger.info]]
-*  - `logger.warn(message)`        : Used by [[Logger.warn]]
-*  - `logger.error(message)`       : Used by [[Logger.error]]
-*
-*
-*  ##### Example
+it(&#x27;should log&#x27;, function () {
+  var spy = {
+    log: sinon.spy()
+  };
+
+  logger.use(spy);
+
+  logger.<span class="apidocCodeKeywordSpan">log</span>(&#x27;test log&#x27;);
+
+  sinon.assert.calledOnce(spy.log);
+});
+
+it(&#x27;should not log below level&#x27;, function () {
+  var spy = {
+    log: sinon.spy()
 ...</pre></li>
     </ul>
 
@@ -9201,7 +9758,22 @@ try {
     return asset;
   }
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+
+// See Base#buildAsset
+Index.prototype.buildAsset = function (logicalPath, pathname, options) {
+  var self = this, key = this.cacheKeyFor(pathname, options);
+
+  if (!this.__assets__[key]) {
+    this.__assets__[key] = this.<span class="apidocCodeKeywordSpan">cacheAsset</span>(key, function () {
+      return _buildAsset.call(self, logicalPath, pathname, options);
+    });
+  }
+
+  return this.__assets__[key];
+};
+...</pre></li>
     </ul>
 
 
@@ -9361,7 +9933,22 @@ return {
     <li>description and source-code<pre class="apidocCodePre">getCompressors = function () {
   return this.__compressors__.clone();
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+// define internal properties
+prop(this, &#x27;__trail__&#x27;,             new Hike(root || &#x27;.&#x27;));
+prop(this, &#x27;__engines__&#x27;,           Mincer.getEngines());
+prop(this, &#x27;__mimeTypes__&#x27;,         Mincer.registeredMimeTypes);
+prop(this, &#x27;__preProcessors__&#x27;,     Mincer.getPreProcessors());
+prop(this, &#x27;__postProcessors__&#x27;,    Mincer.getPostProcessors());
+prop(this, &#x27;__bundleProcessors__&#x27;,  Mincer.getBundleProcessors());
+prop(this, &#x27;__compressors__&#x27;,       Mincer.<span class="apidocCodeKeywordSpan">getCompressors</span>());
+prop(this, &#x27;__configurations__&#x27;,    Mincer.getConfigurations());
+
+// append paths
+_.forEach(Mincer.paths, function (path) {
+  this.appendPath(path);
+}, this);
+...</pre></li>
     </ul>
 
 
@@ -9449,16 +10036,19 @@ Mincer.registerConfiguration(&#x27;source_map&#x27;, {
   config.state = &#x27;enabled&#x27;;
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
+var environment = module.exports = new Mincer.Environment(__dirname);
 
-Mincer.registerConfiguration(&#x27;source_maps&#x27;, { state: &#x27;disabled&#x27; });
 
+//
+// Enable source maps support
+//
 
-// Alias for `source_maps`
-Mincer.registerConfiguration(&#x27;source_map&#x27;, {
-  state:    &#x27;disabled&#x27;,
-  enable:   function (self) { self.<span class="apidocCodeKeywordSpan">enable</span>(&#x27;source_maps&#x27;); },
-  disable:  function (self) { self.disable(&#x27;source_maps&#x27;); }
-});
+environment.<span class="apidocCodeKeywordSpan">enable</span>(&#x27;source_maps&#x27;);
+// environment.sourceRoot = &#x27;/&#x27;; // use to cheat nesting level in dev tools
+
+//
+// Configure environment load paths (where to find ssets)
+//
 ...</pre></li>
     </ul>
 
@@ -9474,7 +10064,23 @@ Mincer.registerConfiguration(&#x27;source_map&#x27;, {
     <li>description and source-code<pre class="apidocCodePre">getConfigurations = function () {
   return _.cloneDeep(this.__configurations__);
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+prop(this, &#x27;__trail__&#x27;,             new Hike(root || &#x27;.&#x27;));
+prop(this, &#x27;__engines__&#x27;,           Mincer.getEngines());
+prop(this, &#x27;__mimeTypes__&#x27;,         Mincer.registeredMimeTypes);
+prop(this, &#x27;__preProcessors__&#x27;,     Mincer.getPreProcessors());
+prop(this, &#x27;__postProcessors__&#x27;,    Mincer.getPostProcessors());
+prop(this, &#x27;__bundleProcessors__&#x27;,  Mincer.getBundleProcessors());
+prop(this, &#x27;__compressors__&#x27;,       Mincer.getCompressors());
+prop(this, &#x27;__configurations__&#x27;,    Mincer.<span class="apidocCodeKeywordSpan">getConfigurations</span>());
+
+// append paths
+_.forEach(Mincer.paths, function (path) {
+  this.appendPath(path);
+}, this);
+
+// append default engines
+...</pre></li>
     </ul>
 
 
@@ -9490,20 +10096,21 @@ Mincer.registerConfiguration(&#x27;source_map&#x27;, {
   return configuration(this, name).state === &#x27;enabled&#x27;;
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-/**
- *  Configuring#isEnabled(name) -&#x3e; Void
- *
- *  Tells whenever given configuration enabled or not.
- *
- *  ##### Example
- *
- *      if (env.<span class="apidocCodeKeywordSpan">isEnabled</span>(&#x27;source_maps&#x27;)) {
- *        // ...
- *      }
- **/
-module.exports.isEnabled = function (name) {
-  return configuration(this, name).state === &#x27;enabled&#x27;;
-};
+  prop(this, &#x27;__dependencyPaths__&#x27;, processedAsset.__dependencyPaths__);
+
+  // moved from the end just to use context helper function
+  Klass       = this.environment.ContextClass;
+  context     = new Klass(this.environment, this.logicalPath, this.pathname);
+
+
+  if (!this.environment.<span class="apidocCodeKeywordSpan">isEnabled</span>(&#x27;source_maps&#x27;)) {
+this.toArray().forEach(function (dep) {
+  source += dep.toString();
+});
+  } else {
+
+var baseDir = path.dirname(this.pathname);
+resultSourceNode = new sourcemap.SourceNode(
 ...</pre></li>
     </ul>
 
@@ -9581,21 +10188,21 @@ Mincer.<span class="apidocCodeKeywordSpan">registerConfiguration</span>(&#x27;au
   this.registerHelper(&#x27;asset_path&#x27;, func);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-*  other `*Path` helpers.
-*
-*  Exposed to the engines as `asset_path` helper.
-*
-*  By default this method is not implemented, and you must provide it&#x27;s
-*  implementation that will fit your needs, e.g.:
-*
-*      environment.ContextClass.<span class="apidocCodeKeywordSpan">defineAssetPath</span>(function (pathname, options) {
-*        var asset = this.environment.findAsset(pathname, options);
-*        return &#x27;/assets/&#x27; + asset.digestPath;
-*      });
-*
-*  Once implemented, you can use `asset_path` helper, e.g.:
-*
-*      #logo { background: url(&#x3c;%= asset_path(&#x27;logo.png&#x27;) %&#x3e;) }
+
+//
+// Define environment essential *_path helper that will be available in the
+// processed assets. See `assets/stylesheets/app.css.ejs` for example.
+//
+
+
+environment.ContextClass.<span class="apidocCodeKeywordSpan">defineAssetPath</span>(function (pathname, options) {
+var asset = this.environment.findAsset(pathname, options);
+
+if (!asset) {
+  throw new Error(&#x27;File &#x27; + pathname + &#x27; not found&#x27;);
+}
+
+return &#x27;/assets/&#x27; + asset.digestPath;
 ...</pre></li>
     </ul>
 
@@ -9858,7 +10465,23 @@ Now, you can call that helper with EJS like this:
 
   return map;
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+    resultSourceNode = new sourcemap.SourceNode(
+                        null,
+                        null,
+                        path.basename(this.pathname)
+                      );
+
+    this.toArray().forEach(function (dep) {
+var map = context.<span class="apidocCodeKeywordSpan">createSourceMapObject</span>({
+  data: dep.toString(),
+  map:  dep.sourceMap,
+  file: dep.pathname
+});
+
+// Convert dependency paths to be relative to current dir
+shiftPaths(map, path.relative(baseDir, path.dirname(dep.pathname)));
+...</pre></li>
     </ul>
 
 
@@ -10070,7 +10693,23 @@ try {
   return stat &#x26;&#x26; stat.isFile() &#x26;&#x26;
          (!this.contentType || this.contentType === content_type);
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+  self.context.dependOn(root);
+
+  _.forEach(self.entries(root), function (pathname) {
+    pathname = path.join(root, pathname);
+
+    if (self.file === pathname) {
+      return;
+    } else if (self.context.<span class="apidocCodeKeywordSpan">isAssetRequirable</span>(pathname)) {
+      self.context.requireAsset(pathname);
+    }
+  });
+},
+
+
+// `require_tree` requires all the nested files in a directory.
+...</pre></li>
     </ul>
 
 
@@ -10117,7 +10756,23 @@ try {
   this.dependOnAsset(pathname);
   this.__requiredPaths__.push(pathname);
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+// path:
+//
+//     //= require &#x22;./bar&#x22;
+//
+require: function (self, args) {
+  var pathname = isRelative(args[0]) ? args[0] : (&#x27;./&#x27; + args[0]);
+
+  self.context.<span class="apidocCodeKeywordSpan">requireAsset</span>(pathname);
+},
+
+// `require_self` causes the body of the current file to be
+// inserted before any subsequent `require` or `include`
+// directives. Useful in CSS files, where it&#x27;s common for the
+// index file to contain global styles that need to be defined
+// before other dependencies are loaded.
+...</pre></li>
     </ul>
 
 
@@ -10203,7 +10858,21 @@ var Hike    = require(&#x27;hike&#x27;);
     <li>description and source-code<pre class="apidocCodePre">stubAsset = function (pathname) {
   this.__stubbedAssets__.push(this.resolve(pathname, { contentType: &#x27;~self~&#x27; }));
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+  // The `path` must be a valid asset and may or may not already
+  // be part of the bundle. Once stubbed, it is blacklisted and
+  // can&#x27;t be brought back by any other `require`.
+  //
+  //     //= stub &#x22;jquery&#x22;
+  //
+  stub: function (self, args) {
+    self.context.<span class="apidocCodeKeywordSpan">stubAsset</span>(args[0]);
+  }
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+...</pre></li>
     </ul>
 
 
@@ -10287,21 +10956,21 @@ var Hike    = require(&#x27;hike&#x27;);
   return _.clone(this.__engines__);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
+*  Returns the format extension.
+*
+*      &#x22;foo.js.coffee&#x22;
+*      // -&#x3e; &#x22;.js&#x22;
+**/
+getter(AssetAttributes.prototype, &#x27;formatExtension&#x27;, function () {
+ return _.find(this.extensions.reverse(), function (ext) {
+   return this.getMimeType(ext) &#x26;&#x26; !this.<span class="apidocCodeKeywordSpan">getEngines</span>(ext);
+ }, this.environment);
+});
+
+
 /**
- *  Engines#getEngines(ext) -&#x3e; Object|Function
- *
- *  Returns an `Object` map of `extension =&#x3e; Engine`s registered on the
- *  `Environment`. If an `ext` argument is supplied, the `Engine` register
- *  under that extension will be returned.
- *
- *      environment.<span class="apidocCodeKeywordSpan">getEngines</span>()
- *      // -&#x3e; { &#x22;.styl&#x22;: StylusEngine, ... }
- *
- *      environment.getEngines(&#x27;.styl&#x27;)
- *      // -&#x3e; StylusEngine
- **/
-module.exports.getEngines = function (ext) {
-if (ext) {
+*  AssetAttributes#engineExtension -&#x3e; Array
+*
 ...</pre></li>
     </ul>
 
@@ -10416,21 +11085,21 @@ Mincer.registerEngine(&#x27;.sass&#x27;,      Mincer.SassEngine);
   return this.data[key];
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
+  srv = child.spawn(&#x27;node&#x27;, [ path.join(__dirname, &#x27;../examples/server.js&#x27;) ], { env: env });
 
-/**
- *  Hash#get(key) -&#x3e; Mixed
- *  - key (String):
- *
- *  Returns value associated with given key:
- *
- *     processors.<span class="apidocCodeKeywordSpan">get</span>(&#x27;text/css&#x27;).push(DirectiveProcessor);
- *
- *  Associates key with value generated by `defaulter` if it does not exists
- *  yet.
- **/
-Hash.prototype.get = function (key) {
-if (!this.data[key]) {
-  this.data[key] = this.defaulter(key);
+  setTimeout(done, 1000);
+});
+
+
+it(&#x27;Server ping&#x27;, function (done) {
+  request.<span class="apidocCodeKeywordSpan">get</span>(&#x27;/&#x27;)
+    .expect(200)
+    .expect(/&#x3c;!DOCTYPE html&#x3e;/)
+    .end(done);
+});
+
+
+it(&#x27;Manifest run&#x27;, function (done) {
 ...</pre></li>
     </ul>
 
@@ -10683,7 +11352,23 @@ prepending for cases where you need to override existing assets.
     <li>description and source-code<pre class="apidocCodePre">function FileStore(root) {
   this.root = path.resolve(root);
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+- Fixed assets unserialisation from cache
+
+
+0.5.1 / 2013-07-17
+------------------
+
+- Added compilation cache. Usage:
+  `env.cache = new Mincer.<span class="apidocCodeKeywordSpan">FileStore</span>(&#x22;/path/to/cache&#x22;);`
+- Minor fixes
+
+
+0.5.0 / 2013-07-01
+------------------
+
+- API cleanup
+...</pre></li>
     </ul>
 
 
@@ -10796,7 +11481,23 @@ prepending for cases where you need to override existing assets.
 
   prop(this, &#x27;data&#x27;, (!!data &#x26;&#x26; _.isObject(data)) ? data : {});
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+//
+// Compiling manifest with bunch of files
+//
+
+/*eslint-disable no-console*/
+
+if (args.output) {
+var manifest = new Mincer.<span class="apidocCodeKeywordSpan">Manifest</span>(environment, args.output);
+
+try {
+  manifest.compile(filenames);
+} catch (err) {
+  console.error(err);
+  process.exit(1);
+}
+...</pre></li>
     </ul>
 
 
@@ -10952,7 +11653,23 @@ prepending for cases where you need to override existing assets.
     }
   }
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+});
+
+//
+// override [[Engines]] mixin methods
+//
+
+func_proxy_with_expire_index(&#x27;registerEngine&#x27;, function (ext, klass) {
+  this.<span class="apidocCodeKeywordSpan">addEngineToTrail</span>(ext, klass);
+});
+
+//
+// override [[Processing]] mixin methods
+//
+
+func_proxy_with_expire_index(&#x27;registerPreprocessor&#x27;);
+...</pre></li>
     </ul>
 
 
@@ -11084,16 +11801,19 @@ Mincer.registerConfiguration(&#x27;source_map&#x27;, {
   config.state = &#x27;enabled&#x27;;
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
+var environment = module.exports = new Mincer.Environment(__dirname);
 
-Mincer.registerConfiguration(&#x27;source_maps&#x27;, { state: &#x27;disabled&#x27; });
 
+//
+// Enable source maps support
+//
 
-// Alias for `source_maps`
-Mincer.registerConfiguration(&#x27;source_map&#x27;, {
-  state:    &#x27;disabled&#x27;,
-  enable:   function (self) { self.<span class="apidocCodeKeywordSpan">enable</span>(&#x27;source_maps&#x27;); },
-  disable:  function (self) { self.disable(&#x27;source_maps&#x27;); }
-});
+environment.<span class="apidocCodeKeywordSpan">enable</span>(&#x27;source_maps&#x27;);
+// environment.sourceRoot = &#x27;/&#x27;; // use to cheat nesting level in dev tools
+
+//
+// Configure environment load paths (where to find ssets)
+//
 ...</pre></li>
     </ul>
 
@@ -11112,7 +11832,23 @@ Mincer.registerConfiguration(&#x27;source_map&#x27;, {
   }
   return this.__bundleProcessors__.clone();
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+// define internal properties
+prop(this, &#x27;__trail__&#x27;,             new Hike(root || &#x27;.&#x27;));
+prop(this, &#x27;__engines__&#x27;,           Mincer.getEngines());
+prop(this, &#x27;__mimeTypes__&#x27;,         Mincer.registeredMimeTypes);
+prop(this, &#x27;__preProcessors__&#x27;,     Mincer.getPreProcessors());
+prop(this, &#x27;__postProcessors__&#x27;,    Mincer.getPostProcessors());
+prop(this, &#x27;__bundleProcessors__&#x27;,  Mincer.<span class="apidocCodeKeywordSpan">getBundleProcessors</span>());
+prop(this, &#x27;__compressors__&#x27;,       Mincer.getCompressors());
+prop(this, &#x27;__configurations__&#x27;,    Mincer.getConfigurations());
+
+// append paths
+_.forEach(Mincer.paths, function (path) {
+  this.appendPath(path);
+}, this);
+...</pre></li>
     </ul>
 
 
@@ -11127,7 +11863,22 @@ Mincer.registerConfiguration(&#x27;source_map&#x27;, {
     <li>description and source-code<pre class="apidocCodePre">getCompressors = function () {
   return this.__compressors__.clone();
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+// define internal properties
+prop(this, &#x27;__trail__&#x27;,             new Hike(root || &#x27;.&#x27;));
+prop(this, &#x27;__engines__&#x27;,           Mincer.getEngines());
+prop(this, &#x27;__mimeTypes__&#x27;,         Mincer.registeredMimeTypes);
+prop(this, &#x27;__preProcessors__&#x27;,     Mincer.getPreProcessors());
+prop(this, &#x27;__postProcessors__&#x27;,    Mincer.getPostProcessors());
+prop(this, &#x27;__bundleProcessors__&#x27;,  Mincer.getBundleProcessors());
+prop(this, &#x27;__compressors__&#x27;,       Mincer.<span class="apidocCodeKeywordSpan">getCompressors</span>());
+prop(this, &#x27;__configurations__&#x27;,    Mincer.getConfigurations());
+
+// append paths
+_.forEach(Mincer.paths, function (path) {
+  this.appendPath(path);
+}, this);
+...</pre></li>
     </ul>
 
 
@@ -11142,7 +11893,23 @@ Mincer.registerConfiguration(&#x27;source_map&#x27;, {
     <li>description and source-code<pre class="apidocCodePre">getConfigurations = function () {
   return _.cloneDeep(this.__configurations__);
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+prop(this, &#x27;__trail__&#x27;,             new Hike(root || &#x27;.&#x27;));
+prop(this, &#x27;__engines__&#x27;,           Mincer.getEngines());
+prop(this, &#x27;__mimeTypes__&#x27;,         Mincer.registeredMimeTypes);
+prop(this, &#x27;__preProcessors__&#x27;,     Mincer.getPreProcessors());
+prop(this, &#x27;__postProcessors__&#x27;,    Mincer.getPostProcessors());
+prop(this, &#x27;__bundleProcessors__&#x27;,  Mincer.getBundleProcessors());
+prop(this, &#x27;__compressors__&#x27;,       Mincer.getCompressors());
+prop(this, &#x27;__configurations__&#x27;,    Mincer.<span class="apidocCodeKeywordSpan">getConfigurations</span>());
+
+// append paths
+_.forEach(Mincer.paths, function (path) {
+  this.appendPath(path);
+}, this);
+
+// append default engines
+...</pre></li>
     </ul>
 
 
@@ -11161,21 +11928,21 @@ Mincer.registerConfiguration(&#x27;source_map&#x27;, {
   return _.clone(this.__engines__);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
+*  Returns the format extension.
+*
+*      &#x22;foo.js.coffee&#x22;
+*      // -&#x3e; &#x22;.js&#x22;
+**/
+getter(AssetAttributes.prototype, &#x27;formatExtension&#x27;, function () {
+ return _.find(this.extensions.reverse(), function (ext) {
+   return this.getMimeType(ext) &#x26;&#x26; !this.<span class="apidocCodeKeywordSpan">getEngines</span>(ext);
+ }, this.environment);
+});
+
+
 /**
- *  Engines#getEngines(ext) -&#x3e; Object|Function
- *
- *  Returns an `Object` map of `extension =&#x3e; Engine`s registered on the
- *  `Environment`. If an `ext` argument is supplied, the `Engine` register
- *  under that extension will be returned.
- *
- *      environment.<span class="apidocCodeKeywordSpan">getEngines</span>()
- *      // -&#x3e; { &#x22;.styl&#x22;: StylusEngine, ... }
- *
- *      environment.getEngines(&#x27;.styl&#x27;)
- *      // -&#x3e; StylusEngine
- **/
-module.exports.getEngines = function (ext) {
-if (ext) {
+*  AssetAttributes#engineExtension -&#x3e; Array
+*
 ...</pre></li>
     </ul>
 
@@ -11192,19 +11959,16 @@ if (ext) {
   return this.__mimeTypes__.getExtension(type) || Mimoza.getExtension(type);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
+ *
+ *  `.coffee` files carry an implicit `.js` extension (due to it&#x27;s implicit
+ *  content type of `application/javascript`).
  **/
-module.exports.addEngineToTrail = function (ext, klass) {
-  var format_ext;
-
-  this.__trail__.appendExtensions(ext);
-
-  if (klass.defaultMimeType) {
-    format_ext = this.<span class="apidocCodeKeywordSpan">getExtensionForMimeType</span>(klass.defaultMimeType);
-    if (format_ext) {
-      this.__trail__.aliasExtension(format_ext, ext);
-    }
+getter(AssetAttributes.prototype, &#x27;engineFormatExtension&#x27;, function () {
+  var type = this.engineContentType;
+  if (type) {
+    return this.environment.<span class="apidocCodeKeywordSpan">getExtensionForMimeType</span>(type);
   }
-};
+});
 ...</pre></li>
     </ul>
 
@@ -11221,21 +11985,21 @@ module.exports.addEngineToTrail = function (ext, klass) {
   return this.__mimeTypes__.getMimeType(ext) || Mimoza.getMimeType(ext);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-
-/**
-*  Mime#getMimeType(ext) -&#x3e; String
+*  Returns the format extension.
 *
-*  Returns the mime type for the `extension`.
+*      &#x22;foo.js.coffee&#x22;
+*      // -&#x3e; &#x22;.js&#x22;
 **/
-module.exports.getMimeType = function (ext) {
- return this.__mimeTypes__.<span class="apidocCodeKeywordSpan">getMimeType</span>(ext) || Mimoza.getMimeType(ext);
-};
+getter(AssetAttributes.prototype, &#x27;formatExtension&#x27;, function () {
+ return _.find(this.extensions.reverse(), function (ext) {
+   return this.<span class="apidocCodeKeywordSpan">getMimeType</span>(ext) &#x26;&#x26; !this.getEngines(ext);
+ }, this.environment);
+});
 
 
 /**
-*  Mime#registeredMimeTypes -&#x3e; Mimoza
+*  AssetAttributes#engineExtension -&#x3e; Array
 *
-*  Returns a copy of `Mimoza` instance with explicitly registered mime types.
 ...</pre></li>
     </ul>
 
@@ -11254,7 +12018,23 @@ module.exports.getMimeType = function (ext) {
   }
   return this.__postProcessors__.clone();
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+*  AssetAttributes#processors -&#x3e; Array
+*
+*  Returns all processors to run on the path.
+**/
+getter(AssetAttributes.prototype, &#x27;processors&#x27;, function () {
+ return [].concat(this.environment.getPreProcessors(this.contentType),
+                  this.engines.reverse(),
+                  this.environment.<span class="apidocCodeKeywordSpan">getPostProcessors</span>(this.contentType));
+});
+
+
+/**
+*  AssetAttributes#contentType -&#x3e; String
+*
+*  Returns the content type for the pathname.
+...</pre></li>
     </ul>
 
 
@@ -11272,7 +12052,23 @@ module.exports.getMimeType = function (ext) {
   }
   return this.__preProcessors__.clone();
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+/**
+*  AssetAttributes#processors -&#x3e; Array
+*
+*  Returns all processors to run on the path.
+**/
+getter(AssetAttributes.prototype, &#x27;processors&#x27;, function () {
+ return [].concat(this.environment.<span class="apidocCodeKeywordSpan">getPreProcessors</span>(this.contentType),
+                  this.engines.reverse(),
+                  this.environment.getPostProcessors(this.contentType));
+});
+
+
+/**
+*  AssetAttributes#contentType -&#x3e; String
+...</pre></li>
     </ul>
 
 
@@ -11288,20 +12084,21 @@ module.exports.getMimeType = function (ext) {
   return configuration(this, name).state === &#x27;enabled&#x27;;
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-/**
- *  Configuring#isEnabled(name) -&#x3e; Void
- *
- *  Tells whenever given configuration enabled or not.
- *
- *  ##### Example
- *
- *      if (env.<span class="apidocCodeKeywordSpan">isEnabled</span>(&#x27;source_maps&#x27;)) {
- *        // ...
- *      }
- **/
-module.exports.isEnabled = function (name) {
-  return configuration(this, name).state === &#x27;enabled&#x27;;
-};
+  prop(this, &#x27;__dependencyPaths__&#x27;, processedAsset.__dependencyPaths__);
+
+  // moved from the end just to use context helper function
+  Klass       = this.environment.ContextClass;
+  context     = new Klass(this.environment, this.logicalPath, this.pathname);
+
+
+  if (!this.environment.<span class="apidocCodeKeywordSpan">isEnabled</span>(&#x27;source_maps&#x27;)) {
+this.toArray().forEach(function (dep) {
+  source += dep.toString();
+});
+  } else {
+
+var baseDir = path.dirname(this.pathname);
+resultSourceNode = new sourcemap.SourceNode(
 ...</pre></li>
     </ul>
 
@@ -11704,21 +12501,19 @@ Mincer.registerConfiguration(&#x27;source_maps&#x27;, { state: &#x27;disabled&#x
   (backend.log || DEAF_LOGGER.log)(level, message);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-*
-*
-*  ##### Log levels
-*
-*  Your `logger` backend should normally respond to following methods:
-*
-*  - `logger.log(level, message)`  : Used by [[Logger.log]]
-*  - `logger.<span class="apidocCodeKeywordSpan">debug</span>(message)`       : Used by [[Logger.debug]]
-*  - `logger.info(message)`        : Used by [[Logger.info]]
-*  - `logger.warn(message)`        : Used by [[Logger.warn]]
-*  - `logger.error(message)`       : Used by [[Logger.error]]
-*
-*
-*  ##### Example
-*
+  it(&#x27;should log at set level&#x27;, function () {
+    var spy = {
+      debug: sinon.spy()
+    };
+
+    logger.use(spy).level(logger.DEBUG_LEVEL);
+
+    logger.<span class="apidocCodeKeywordSpan">debug</span>(&#x27;test log&#x27;);
+
+    sinon.assert.calledOnce(spy.debug);
+  });
+
+});
 ...</pre></li>
     </ul>
 
@@ -11746,21 +12541,19 @@ Mincer.registerConfiguration(&#x27;source_maps&#x27;, { state: &#x27;disabled&#x
   (backend.log || DEAF_LOGGER.log)(level, message);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
- *
- *  Your `logger` backend should normally respond to following methods:
- *
- *  - `logger.log(level, message)`  : Used by [[Logger.log]]
- *  - `logger.debug(message)`       : Used by [[Logger.debug]]
- *  - `logger.info(message)`        : Used by [[Logger.info]]
- *  - `logger.warn(message)`        : Used by [[Logger.warn]]
- *  - `logger.<span class="apidocCodeKeywordSpan">error</span>(message)`       : Used by [[Logger.error]]
- *
- *
- *  ##### Example
- *
- *      Logger.use(console);
- **/
-module.exports.use = function (logger) {
+
+if (args.output) {
+  var manifest = new Mincer.Manifest(environment, args.output);
+
+  try {
+    manifest.compile(filenames);
+  } catch (err) {
+    console.<span class="apidocCodeKeywordSpan">error</span>(err);
+    process.exit(1);
+  }
+
+  process.exit(0);
+}
 ...</pre></li>
     </ul>
 
@@ -11788,21 +12581,21 @@ module.exports.use = function (logger) {
   (backend.log || DEAF_LOGGER.log)(level, message);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-*
-*  ##### Log levels
-*
-*  Your `logger` backend should normally respond to following methods:
-*
-*  - `logger.log(level, message)`  : Used by [[Logger.log]]
-*  - `logger.debug(message)`       : Used by [[Logger.debug]]
-*  - `logger.<span class="apidocCodeKeywordSpan">info</span>(message)`        : Used by [[Logger.info]]
-*  - `logger.warn(message)`        : Used by [[Logger.warn]]
-*  - `logger.error(message)`       : Used by [[Logger.error]]
-*
-*
-*  ##### Example
-*
-*      Logger.use(console);
+  var assetsData = manifest.compile([ &#x27;app.js&#x27;, &#x27;app.css&#x27;, &#x27;alt.css&#x27;, &#x27;stripes.png&#x27; ], {
+    compress: true,
+    sourceMaps: true,
+    embedMappingComments: true
+  });
+
+  /*eslint-disable no-console*/
+  console.<span class="apidocCodeKeywordSpan">info</span>(&#x27;\n\nAssets were successfully compiled.\n&#x27; +
+               &#x27;Manifest data (a proper JSON) was written to:\n&#x27; +
+               manifest.path + &#x27;\n\n&#x27;);
+  console.dir(assetsData);
+} catch (err) {
+  console.error(&#x27;Failed compile assets: &#x27; + (err.message || err.toString()));
+  process.exit(1);
+}
 ...</pre></li>
     </ul>
 
@@ -11822,19 +12615,17 @@ module.exports.use = function (logger) {
     <li>example usage<pre class="apidocCodePre">...
 
 
-// log level to report
-var levelToReport = 0;
+1.2.3 / 2015-02-07
+------------------
 
-
-/**
-*  Logger.<span class="apidocCodeKeywordSpan">level</span>(int) -&#x3e; Logger
-*  - int (Integer): A number respresenting which levels to log
-*
-*  Allows to mute lower log levels. Any log level less than the number
-*  specified will be ignored.
-*
-*  ##### Log levels
-*
+- Fixed examples compatibility with LESS 2.x (#182, thanks to @tikotzky)
+- Loger improvements (#176, thanks to @jisaacks)
+  - added `.<span class="apidocCodeKeywordSpan">level</span>()` method
+  - methods are now chainable
+  - tests
+- Fixed iteration over bower main files (#166, thanks to @mileszim)
+- Fixed SASS indented style support (#184, thanks to @rodrigoscna)
+- Bumped `mimoza` dependency &#x26; updated api calls appropriately.
 ...</pre></li>
     </ul>
 
@@ -11862,21 +12653,21 @@ var levelToReport = 0;
   (backend.log || DEAF_LOGGER.log)(level, message);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-*  going to &#x22;nowhere&#x22;).
-*
-*
-*  ##### Log levels
-*
-*  Your `logger` backend should normally respond to following methods:
-*
-*  - `logger.<span class="apidocCodeKeywordSpan">log</span>(level, message)`  : Used by [[Logger.log]]
-*  - `logger.debug(message)`       : Used by [[Logger.debug]]
-*  - `logger.info(message)`        : Used by [[Logger.info]]
-*  - `logger.warn(message)`        : Used by [[Logger.warn]]
-*  - `logger.error(message)`       : Used by [[Logger.error]]
-*
-*
-*  ##### Example
+it(&#x27;should log&#x27;, function () {
+  var spy = {
+    log: sinon.spy()
+  };
+
+  logger.use(spy);
+
+  logger.<span class="apidocCodeKeywordSpan">log</span>(&#x27;test log&#x27;);
+
+  sinon.assert.calledOnce(spy.log);
+});
+
+it(&#x27;should not log below level&#x27;, function () {
+  var spy = {
+    log: sinon.spy()
 ...</pre></li>
     </ul>
 
@@ -11982,19 +12773,16 @@ app.use(function (req, res) {
   return this.__mimeTypes__.getExtension(type) || Mimoza.getExtension(type);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
+ *
+ *  `.coffee` files carry an implicit `.js` extension (due to it&#x27;s implicit
+ *  content type of `application/javascript`).
  **/
-module.exports.addEngineToTrail = function (ext, klass) {
-  var format_ext;
-
-  this.__trail__.appendExtensions(ext);
-
-  if (klass.defaultMimeType) {
-    format_ext = this.<span class="apidocCodeKeywordSpan">getExtensionForMimeType</span>(klass.defaultMimeType);
-    if (format_ext) {
-      this.__trail__.aliasExtension(format_ext, ext);
-    }
+getter(AssetAttributes.prototype, &#x27;engineFormatExtension&#x27;, function () {
+  var type = this.engineContentType;
+  if (type) {
+    return this.environment.<span class="apidocCodeKeywordSpan">getExtensionForMimeType</span>(type);
   }
-};
+});
 ...</pre></li>
     </ul>
 
@@ -12011,21 +12799,21 @@ module.exports.addEngineToTrail = function (ext, klass) {
   return this.__mimeTypes__.getMimeType(ext) || Mimoza.getMimeType(ext);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-
-/**
-*  Mime#getMimeType(ext) -&#x3e; String
+*  Returns the format extension.
 *
-*  Returns the mime type for the `extension`.
+*      &#x22;foo.js.coffee&#x22;
+*      // -&#x3e; &#x22;.js&#x22;
 **/
-module.exports.getMimeType = function (ext) {
- return this.__mimeTypes__.<span class="apidocCodeKeywordSpan">getMimeType</span>(ext) || Mimoza.getMimeType(ext);
-};
+getter(AssetAttributes.prototype, &#x27;formatExtension&#x27;, function () {
+ return _.find(this.extensions.reverse(), function (ext) {
+   return this.<span class="apidocCodeKeywordSpan">getMimeType</span>(ext) &#x26;&#x26; !this.getEngines(ext);
+ }, this.environment);
+});
 
 
 /**
-*  Mime#registeredMimeTypes -&#x3e; Mimoza
+*  AssetAttributes#engineExtension -&#x3e; Array
 *
-*  Returns a copy of `Mimoza` instance with explicitly registered mime types.
 ...</pre></li>
     </ul>
 
@@ -12150,7 +12938,23 @@ prepending for cases where you need to override existing assets.
     }
   }
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+});
+
+//
+// override [[Engines]] mixin methods
+//
+
+func_proxy_with_expire_index(&#x27;registerEngine&#x27;, function (ext, klass) {
+  this.<span class="apidocCodeKeywordSpan">addEngineToTrail</span>(ext, klass);
+});
+
+//
+// override [[Processing]] mixin methods
+//
+
+func_proxy_with_expire_index(&#x27;registerPreprocessor&#x27;);
+...</pre></li>
     </ul>
 
 
@@ -12168,7 +12972,23 @@ prepending for cases where you need to override existing assets.
   }
   return this.__bundleProcessors__.clone();
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+// define internal properties
+prop(this, &#x27;__trail__&#x27;,             new Hike(root || &#x27;.&#x27;));
+prop(this, &#x27;__engines__&#x27;,           Mincer.getEngines());
+prop(this, &#x27;__mimeTypes__&#x27;,         Mincer.registeredMimeTypes);
+prop(this, &#x27;__preProcessors__&#x27;,     Mincer.getPreProcessors());
+prop(this, &#x27;__postProcessors__&#x27;,    Mincer.getPostProcessors());
+prop(this, &#x27;__bundleProcessors__&#x27;,  Mincer.<span class="apidocCodeKeywordSpan">getBundleProcessors</span>());
+prop(this, &#x27;__compressors__&#x27;,       Mincer.getCompressors());
+prop(this, &#x27;__configurations__&#x27;,    Mincer.getConfigurations());
+
+// append paths
+_.forEach(Mincer.paths, function (path) {
+  this.appendPath(path);
+}, this);
+...</pre></li>
     </ul>
 
 
@@ -12186,7 +13006,23 @@ prepending for cases where you need to override existing assets.
   }
   return this.__postProcessors__.clone();
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+*  AssetAttributes#processors -&#x3e; Array
+*
+*  Returns all processors to run on the path.
+**/
+getter(AssetAttributes.prototype, &#x27;processors&#x27;, function () {
+ return [].concat(this.environment.getPreProcessors(this.contentType),
+                  this.engines.reverse(),
+                  this.environment.<span class="apidocCodeKeywordSpan">getPostProcessors</span>(this.contentType));
+});
+
+
+/**
+*  AssetAttributes#contentType -&#x3e; String
+*
+*  Returns the content type for the pathname.
+...</pre></li>
     </ul>
 
 
@@ -12204,7 +13040,23 @@ prepending for cases where you need to override existing assets.
   }
   return this.__preProcessors__.clone();
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+/**
+*  AssetAttributes#processors -&#x3e; Array
+*
+*  Returns all processors to run on the path.
+**/
+getter(AssetAttributes.prototype, &#x27;processors&#x27;, function () {
+ return [].concat(this.environment.<span class="apidocCodeKeywordSpan">getPreProcessors</span>(this.contentType),
+                  this.engines.reverse(),
+                  this.environment.getPostProcessors(this.contentType));
+});
+
+
+/**
+*  AssetAttributes#contentType -&#x3e; String
+...</pre></li>
     </ul>
 
 

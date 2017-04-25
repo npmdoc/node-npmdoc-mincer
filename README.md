@@ -1,6 +1,6 @@
 # npmdoc-mincer
 
-#### api documentation for  [mincer (v1.5.1)](https://github.com/nodeca/mincer#readme)  [![npm package](https://img.shields.io/npm/v/npmdoc-mincer.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-mincer) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-mincer.svg)](https://travis-ci.org/npmdoc/node-npmdoc-mincer)
+#### basic api documentation for  [mincer (v1.5.1)](https://github.com/nodeca/mincer#readme)  [![npm package](https://img.shields.io/npm/v/npmdoc-mincer.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-mincer) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-mincer.svg)](https://travis-ci.org/npmdoc/node-npmdoc-mincer)
 
 #### Web assets processor. Native JavaScript port of Sprockets.
 
